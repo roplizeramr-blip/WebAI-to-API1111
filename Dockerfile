@@ -19,6 +19,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
+# Railway runtime configuration
+RUN cp config.conf.example config.conf && \
+    mkdir -p /app/runtime/auth /app/runtime/conversations /app/runtime/cache
+
 # Keep image ownership configurable while reusing Playwright's non-root user.
 RUN set -eux; \
     current_uid="$(id -u pwuser)"; \
@@ -76,7 +80,7 @@ RUN set -eux; \
         usermod --uid "$APP_UID" pwuser; \
     fi; \
     usermod --gid "$APP_GID" pwuser; \
-    chown -R "$APP_UID:$APP_GID" /home/pwuser; \
+    chown -R "$APP_UID:$APP_GID" /home/pwuser /app/runtime /app/config.conf; \
     final_uid="$(id -u pwuser)"; \
     final_gid="$(id -g pwuser)"; \
     [ "$final_uid" = "$APP_UID" ] || { echo "pwuser UID mismatch: $final_uid != $APP_UID" >&2; exit 1; }; \
@@ -89,4 +93,4 @@ USER pwuser
 EXPOSE 6969
 
 # Run the application via the startup wrapper
-CMD ["python", "src/run.py", "--host", "0.0.0.0", "--port", "6969"]
+CMD ["sh", "-c", "python src/run.py --host 0.0.0.0 --port ${PORT:-6969}"]
