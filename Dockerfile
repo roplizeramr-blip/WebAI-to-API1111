@@ -87,10 +87,10 @@ RUN set -eux; \
     [ "$final_gid" = "$APP_GID" ] || { echo "pwuser GID mismatch: $final_gid != $APP_GID" >&2; exit 1; }
 
 ENV HOME=/home/pwuser
-USER pwuser
+USER root
 
 # Default Port 
 EXPOSE 6969
 
 # Run the application via the startup wrapper
-CMD ["sh", "-c", "python src/run.py --host 0.0.0.0 --port ${PORT:-6969}"]
+CMD ["./start.sh"]
