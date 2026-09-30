@@ -24,7 +24,8 @@ chown -R "$PW_UID:$PW_GID" "$RUNTIME_DIR" 2>/dev/null || true
 
 rm -f /tmp/browser.htpasswd
 printf '%s\n' "$BROWSER_PASSWORD" | htpasswd -B -i -c /tmp/browser.htpasswd "$BROWSER_USERNAME" >/dev/null
-chmod 600 /tmp/browser.htpasswd
+chown www-data:www-data /tmp/browser.htpasswd
+chmod 640 /tmp/browser.htpasswd
 
 x11vnc -storepasswd "$VNC_PASSWORD" "$RUNTIME_DIR/vnc/passwd" >/dev/null
 chmod 600 "$RUNTIME_DIR/vnc/passwd"
